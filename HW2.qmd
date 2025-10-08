@@ -1,0 +1,6 @@
+---
+title: "Homework 2: Exploring patterns of environmental justice"
+author: "Jaslyn Miura"
+format: html
+---
+
