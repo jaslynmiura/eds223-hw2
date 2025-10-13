@@ -4,3 +4,81 @@ author: "Jaslyn Miura"
 format: html
 ---
 
+```{r}
+
+# loading the required packages
+library(tidyverse)
+library(sf)
+library(here)
+library(tmap)
+
+```
+
+```{r}
+
+ejscreen <- st_read(here::here("data", "ejscreen", "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb"))
+
+redlining <- st_read(here::here("data", "mapping-inequality", "mapping-inequality-los-angeles.json"))
+
+birds <- st_read(here::here("data", "gbif-birds-LA", "gbif-birds-LA.shp"))
+
+la_county <- ejscreen %>% 
+  filter(STATE_NAME == "California") %>% 
+  filter(CNTY_NAME == "Los Angeles County")
+
+```
+
+# Checking that the datasets have the same coordinate reference system 
+```{r}
+
+st_crs(la_county) == st_crs(redlining)
+st_crs(la_county) == st_crs(birds)
+
+redlining <- st_transform(redlining, crs = st_crs(la_county))
+birds <- st_transform(birds, crs = st_crs(la_county))
+
+st_crs(la_county) == st_crs(redlining)
+st_crs(la_county) == st_crs(birds)
+st_crs(redlining) == st_crs(birds)
+
+```
+
+# Map 1
+```{r}
+
+tm_shape(la_county, bbox = redlining) +
+  tm_polygons(lwd = 0.5) +
+tm_shape(redlining) +
+  tm_polygons(fill = "grade",
+              lwd = 0.5)
+  
+```
+
+# 2. Creating a table summerizing:
+the percentage of census block groups that fall within each HOLC grade
+Also include the percent of census black groups that don’t fall within a HOLC grade
+Hint: The HOLC data contains the grades and the EJScreen data contains the census blocks, so you will need to combine the data spatially before doing summary statistics. Once you combine and no longer need the geometries, you can use st_drop_geometry().
+```{r}
+
+la_redline <- st_join(la_county, redlining) %>% 
+  st_drop_geometry()
+
+census <- la_redline %>% 
+  group_by(grade) %>% 
+  summarize(Percentage = (n()/8988)*100) # %>%  
+  # kableExtra::kable()
+  
+census
+
+```
+3. Create at least two visualizations summarizing current conditions (from the EJScreen data) within HOLC grades using the mean of the following variables (you may combine variables or create separate plots):
+- % low income
+- percentile for Particulate Matter 2.5
+- percentile for low life expectancy
+- Use ggplot for your visualizations! You will first need to calculate mean of each variable grouped by HOLC grade.
+```{r}
+
+
+
+```
+
