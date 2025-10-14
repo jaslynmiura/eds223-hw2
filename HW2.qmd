@@ -78,7 +78,12 @@ census
 - Use ggplot for your visualizations! You will first need to calculate mean of each variable grouped by HOLC grade.
 ```{r}
 
+la_county_mean <- la_redline %>% 
+  group_by(grade) %>% 
+  summarize(low_in_per = mean(LOWINCPCT))
 
+ggplot(data = la_county_mean, aes(x = grade, y = low_in_per)) +
+  geom_bar()
 
 ```
 
