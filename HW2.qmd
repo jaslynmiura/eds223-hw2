@@ -2,6 +2,10 @@
 title: "Homework 2: Exploring patterns of environmental justice"
 author: "Jaslyn Miura"
 format: html
+execute:
+  warning: false
+  message: false
+  cache: true
 ---
 
 ```{r}
@@ -107,3 +111,24 @@ ggplot(data = la_low_life_mean, aes(x = grade, y = low_life_mean)) +
 ## Discussion:
 
 # Part 2: Legaacy of redlining in biodiversity observations
+
+```{r}
+
+st_crs(la_county) == st_crs(birds)
+
+holc_birds <- st_join(redlining, birds) %>% 
+  st_drop_geometry()
+
+birds_percent <- holc_birds %>% 
+  group_by(grade) %>% 
+  summarise(bird_obs = n()/135683* 100)
+birds_percent
+
+ggplot(data = birds_percent, aes(x = grade, y = bird_obs)) + 
+  geom_bar(stat = "identity")
+
+```
+## Discussion:
+
+## 2. 
+Our results don’t match the findings from Ellis-Soto et al. 2023! Read the abstract of the study. Why might we have obtained different results in our analysis? What did the paper consider that we did not?
