@@ -78,12 +78,32 @@ census
 - Use ggplot for your visualizations! You will first need to calculate mean of each variable grouped by HOLC grade.
 ```{r}
 
-la_county_mean <- la_redline %>% 
+la_county_low_in_mean <- la_redline %>% 
   group_by(grade) %>% 
-  summarize(low_in_per = mean(LOWINCPCT))
+  summarize(low_in_per = mean(P_LOWINCPCT))
 
-ggplot(data = la_county_mean, aes(x = grade, y = low_in_per)) +
-  geom_bar()
+la_pm25_mean <- la_redline %>% 
+  group_by(grade) %>% 
+  summarize(pm25_mean = mean(P_PM25, na.rm = TRUE))
+
+la_low_life_mean <- la_redline %>% 
+  group_by(grade) %>% 
+  summarize(low_life_mean = mean(P_LIFEEXPPCT, na.rm = TRUE))
+
+ggplot(data = la_county_low_in_mean, aes(x = grade, y = low_in_per)) +
+  geom_bar(stat = "identity",
+           fill = "lightblue") +
+  labs(x = "Grade",
+       y = "Percentile of Low Income",
+       title = "Percentile of Low Income by HOLC Grade")
+
+ggplot(data = la_low_life_mean, aes(x = grade, y = low_life_mean)) +
+  geom_bar(stat = "identity",fill = "maroon") +
+  labs(x = "Grade",
+       y = "Percentile of Low Life Expectancy",
+       title = "Percentile of Low Life Expectancy by HOLC Grade")
 
 ```
+## Discussion:
 
+# Part 2: Legaacy of redlining in biodiversity observations
