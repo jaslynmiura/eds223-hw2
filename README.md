@@ -1,4 +1,4 @@
-# The Legacy of Redlining Legacy on Los Angeles
+# The Legacy of Redlining in Los Angeles County
 
 This is a GitHub repository for Jaslyn Miura's analysis of the effects of redlining's legacy on modern day Los Angeles County and the bird biodiversity within the county, using EJScreen, HOLC Redlining, and Biodiversity observation data.
 
