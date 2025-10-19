@@ -3,4 +3,14 @@
 .RData
 .Ruserdata
 
+# ignoring the data for HW2
 data/
+
+# ignoring the cache file
+HW2_cahe/
+
+# ignoring the html
+HW2.html
+
+# ignoring the HW2_files
+HW2_files/
