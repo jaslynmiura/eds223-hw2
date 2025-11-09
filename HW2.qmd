@@ -9,7 +9,7 @@ execute:
   cache: true
 ---
 
-```{r, echo=FALSE}
+```{r}
 
 # loading the required packages
 library(tidyverse)
@@ -19,7 +19,6 @@ library(gt)
 library(patchwork)
 library(kableExtra)
 library(tmap)
-
 
 ```
 
