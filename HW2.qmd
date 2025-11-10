@@ -4,12 +4,11 @@ author: "Jaslyn Miura"
 date: October 18, 2025
 format: pdf
 execute:
-  warning: false
   message: false
   cache: true
 ---
 
-```{r}
+```{r output = FALSE}
 
 # loading the required packages
 library(tidyverse)
@@ -23,7 +22,7 @@ library(tmap)
 ```
 
 ### Reading EJScreen, HOLC Redlining, and Biodiversity observation data
-```{r}
+```{r results='hide'}
 
 # read in geodatabase of EJScreen data at the Census Block Group level
 ejscreen <- st_read(here::here("data", "ejscreen", 
@@ -54,17 +53,9 @@ holc_grade_colors <- c("#7CAB7DFF", "#75B7D1FF", "#F9D662FF", "#FF7676FF")
 if(st_crs(la_county) == st_crs(redlining)){
   print("it's a match!")
 } else {
-  print("crs does not a match")
-}
-
-# setting the crs of redlining to the crs of la_county
-redlining <- st_transform(redlining, crs = st_crs(la_county))
-
-# checking again if the crs of the two data sets match, before we proceed
-if(st_crs(la_county) == st_crs(redlining)){
-  print("it's a match!")
-} else {
-  print("crs does not a match")
+  warning("Updating coordinate reference systems to match")
+  # transform data to match
+  redlining <- st_transform(redlining, st_crs(la_county))
 }
 
 ```
@@ -74,6 +65,7 @@ Mapping the historical redlining in Los Angeles County.
 
 ### Creating the Map
 ```{r}
+#| warning: false
 
 # using la_county and redlining to map the distribution of graded neighborhoods
 tm_shape(la_county, bbox = redlining) +
@@ -192,17 +184,9 @@ Our bar graphs provide a piece of evidence that the legacy of redlining still ef
 if(st_crs(redlining) == st_crs(birds)){
   print("it's a match!")
 } else {
-  print("crs does not a match")
-}
-
-# setting the crs of birds to the crs of redlining
-birds <- st_transform(birds, crs = st_crs(redlining))
-
-# checking again if the crs of the two data sets match, before we proceed
-if(st_crs(redlining) == st_crs(birds)){
-  print("it's a match!")
-} else {
-  print("crs does not a match")
+  warning("Updating coordinate reference systems to match")
+  # transform data to match
+  birds <- st_transform(birds, st_crs(redlining))
 }
 
 ```
