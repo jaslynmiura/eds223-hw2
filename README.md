@@ -28,9 +28,9 @@ The eds-hw2 directory contains:
 
 -   mapping-inequality: raw HOLC Redlining data
 
-**HW2.qmd:** Quarto document that creates a map of LA County and bar graphs for analysis.
+**redlining_LA.pdf:** Rendered quarto document with complete code, maps, and analysis.
 
-**HW2.pdf:** Rendered quarto document with complete code, maps, and analysis.
+**redlining_LA.qmd:** Quarto document that creates a map of LA County and bar graphs for analysis.
 
 **Data Access:**
 
