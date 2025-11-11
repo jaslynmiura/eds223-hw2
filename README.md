@@ -13,7 +13,7 @@ redlining-legacy-los-angeles
 │   ├── gbif-birds-LA
 │   └── mapping-inequality
 ├── eds223-hw2.Rproj
-├── HW2.pdf
+├── redlining_LA.pdf
 ├── redlining_LA.qmd
 └── README.md
 ```
