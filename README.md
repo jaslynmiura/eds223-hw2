@@ -32,7 +32,7 @@ The eds-hw2 directory contains:
 
 **redlining_LA.qmd:** Quarto document that creates a map of LA County and bar graphs for analysis.
 
-**Data Access:**
+## **Data Access:**
 
 The EJScreen data was accessed through the EJScreen: Environmental Justice Screening and Mapping Tool website. Numerous EJ indicators are available for all the states in the United States and U.S. Territories. HOLC Redlining data was accessed through the Mapping Inequality: Redlining in New Deal America website. Where data is categorized by a redlining grade and is available for cities across the states. The Biodiversity observations data was accessed through the Global Biodiversity Information Facility
 
@@ -48,7 +48,7 @@ Biodiversity observations:
 
 Note: due to the large file size, the data/ has been added to the .gitignore
 
-**References:**
+## **References:**
 
 Global Biodiversity Information Facility, 2021. GBIF. Retrieved: October 8, 2025 from (<https://www.gbif.org/>)
 
@@ -58,4 +58,6 @@ U.S. Environmental Protection Agency (EPA), 2023. EJScreen Technical Documentati
 
 United States Environmental Protection Agency. 2015. EJSCREEN. Retrieved: October, 8, 2025, <https://19january2017snapshot.epa.gov/ejscreen/download-ejscreen-data_.html>
 
-**Author:** Jaslyn Miura
+## **Author:** 
+
+Jaslyn Miura
