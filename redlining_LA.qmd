@@ -1,0 +1,233 @@
+---
+title: "The Legacy of Redlining in Los Angeles County"
+author: "Jaslyn Miura"
+date: October 18, 2025
+format: pdf
+execute:
+  message: false
+  cache: true
+---
+
+```{r output = FALSE}
+
+# loading the required packages
+library(tidyverse)
+library(sf)
+library(here)
+library(gt)
+library(patchwork)
+library(kableExtra)
+library(tmap)
+
+```
+
+### Reading EJScreen, HOLC Redlining, and Biodiversity observation data
+```{r results='hide'}
+
+# read in geodatabase of EJScreen data at the Census Block Group level
+ejscreen <- st_read(here::here("data", "ejscreen", 
+                               "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb"))
+
+# read in HOLC Redlining data
+redlining <- st_read(here::here("data", 
+                                "mapping-inequality", 
+                                "mapping-inequality-los-angeles.json"))
+
+# read in Biodiversity observation data
+birds <- st_read(here::here("data", "gbif-birds-LA", "gbif-birds-LA.shp"))
+
+# filter the ejscreen data to Los Angeles County
+la_county <- ejscreen %>% 
+  filter(STATE_NAME == "California") %>% 
+  filter(CNTY_NAME == "Los Angeles County")
+
+# creating a color palette to apply to the map and graphs
+holc_grade_colors <- c("#7CAB7DFF", "#75B7D1FF", "#F9D662FF", "#FF7676FF")
+
+```
+
+#### Checking that the datasets have the same coordinate reference system 
+```{r}
+
+# checking if the crs of la_county and redlining match
+if(st_crs(la_county) == st_crs(redlining)){
+  print("it's a match!")
+} else {
+  warning("Updating coordinate reference systems to match")
+  # transform data to match
+  redlining <- st_transform(redlining, st_crs(la_county))
+}
+
+```
+## Part 1: Legacy of redlining in current environmental (in)justice
+
+Mapping the historical redlining in Los Angeles County. 
+
+### Creating the Map
+```{r}
+#| warning: false
+
+# using la_county and redlining to map the distribution of graded neighborhoods
+tm_shape(la_county, bbox = redlining) +
+  tm_polygons(lwd = 0.5) +
+tm_shape(redlining) +
+  tm_polygons(fill = "grade",
+              palette = holc_grade_colors,
+              title = "Grade",
+              labels = c("A - Best", 
+                         "B - Still Desirable", 
+                         "C - Declining", 
+                         "D - Hazardous"),
+              lwd = 0.5) + 
+  tm_title(text = "Redline Grades by Neighborhood in LA County") +
+  tm_compass(type = "8star", 
+             size = 2,
+             position = c("right", "bottom")) +
+  tm_scale_bar(size = 2) +
+  tm_components(c("tm_compass", "tm_scalebar"),
+                position = c("right", "bottom"))
+  
+```
+
+### Summerizing the distribution of redlining in LA County
+```{r}
+
+# spatially joining the la_county data to the redlining data and dropping the geometry
+la_redline <- st_join(la_county, redlining) %>% 
+  st_drop_geometry()
+
+# creating a table
+census <- la_redline %>% 
+  group_by(grade) %>% 
+  summarize(Percentage = (n()/ nrow(la_redline))*100) %>%  
+  rename(Grade = grade) %>% 
+  kable(col.names = c("Grade", "Percentage"),
+        caption = "Percentage of Census Block Groups within Each HOLC Grade") %>% 
+  kable_styling(bootstrap_options = "striped",
+                            full_width = FALSE)
+
+# displaying the table
+census
+
+```
+
+### Understanding relationship between historical redlining and current environmental issues  
+```{r}
+
+# calculating the average percent of low income for each HOLC grade
+la_county_low_in_mean <- la_redline %>% 
+  group_by(grade) %>% 
+  summarize(low_in_per = mean(P_LOWINCPCT))
+
+# calculating the average percentile of low life expectancy for each HOLC grade
+la_low_life_mean <- la_redline %>% 
+  group_by(grade) %>% 
+  summarize(low_life_mean = mean(P_LIFEEXPPCT, na.rm = TRUE))
+
+```
+
+```{r}
+
+# visualizing through a bar graph the average percent of low income for each HOLC grade
+low_income <- ggplot(data = la_county_low_in_mean, 
+                     aes(x = grade, y = low_in_per, fill = grade)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = holc_grade_colors,
+                    labels = c("A - Best", 
+                               "B - Still Desirable", 
+                               "C - Declining", 
+                               "D - Hazardous")) +
+  labs(x = "Grade",
+       y = "Average Percent of Low Income",
+       title = "Average Percent of Low Income by HOLC Grade",
+       fill = "Grade")
+
+# displaying the graph
+low_income
+
+```
+**Discussion:** From this bar graph we see that the neighborhoods with a HOLC grade of D, which indicates a "Hazardous" area, has the highest average percent of low income. While the neighborhoods with a HOLC grade of A, indicating the "Best" area, has the lowest average percent of low income.
+
+
+```{r}
+
+# visualizing through a bar graph the average percent of average percentile of low life expectancy for each HOLC grade
+low_life <- ggplot(data = la_low_life_mean, 
+                   aes(x = grade, y = low_life_mean, fill = grade)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = holc_grade_colors,
+                    labels = c("A - Best", 
+                               "B - Still Desirable", 
+                               "C - Declining", 
+                               "D - Hazardous")) +
+  labs(x = "Grade",
+       y = "Average Percentile of Low Life Expectancy",
+       title = "Average Percentile of Low Life Expectancy by HOLC Grade",
+       fill = "Grade")
+
+# displaying the graph
+low_life
+
+```
+**Discussion:** Similar to the previous graph, the highest average percentile of low life expectancy is found in the neighborhoods graded D, "Hazardous". This means that in neighborhoods with a grade of "Hazardous", the average age people die, is much lower compared to the other graded neighborhoods.
+
+### Overall Interpretation:
+Our bar graphs provide a piece of evidence that the legacy of redlining still effect the Los Angeles County, as within the neighborhoods that have been historically graded D, "Hazardous", communities suffer the most from socioeconomic problems. This is indicated by the highest average percent of low income and the highest average percentile of low life expectancy are both found in the historically graded D neighborhoods. With historically graded C, "Declining", neighborhood coming in at close seconds to these high statistics. If the legacy of redlining was not a factor within our current socioeconomic issues, then we would've expected similar averages among the grades. What this data means is that while neighborhoods may no longer be offically redlined, there is still an uneven distribution of wealth, greenery, safety features, etc., affecting the low income and low life expectancy within the Los Anegels County.
+
+
+# Part 2: Legaacy of redlining in biodiversity observations
+
+#### Checking that the datasets have the same coordinate reference system 
+```{r}
+
+# checking if the crs of redlining and birds match
+if(st_crs(redlining) == st_crs(birds)){
+  print("it's a match!")
+} else {
+  warning("Updating coordinate reference systems to match")
+  # transform data to match
+  birds <- st_transform(birds, st_crs(redlining))
+}
+
+```
+
+### Understanding the relationship between historical redlining and current biodiversity observations
+```{r}
+
+# spatially joining the birds data to the redlining data, dropping the geometry
+holc_birds <- st_join(redlining, birds) %>% 
+  st_drop_geometry()
+
+# calculating the percent of bird observations witin each HOLC grade
+birds_percent <- holc_birds %>% 
+  group_by(grade) %>% 
+  summarise(bird_obs = n() / nrow(holc_birds) * 100)
+
+```
+
+```{r}
+
+# visualizing through a bar graph the percentage of bird observations within each HOLC grade
+ggplot(data = birds_percent, aes(x = grade, y = bird_obs, fill = grade)) + 
+  geom_bar(stat = "identity") + 
+  scale_fill_manual(values = holc_grade_colors,
+                    labels = c("A - Best", 
+                               "B - Still Desirable", 
+                               "C - Declining", 
+                               "D - Hazardous")) +
+  labs(x = "Grade",
+       y = "Percent of Bird Observations",
+       title = "Percentage of Bird Observations within Each HOLC Grade", 
+       fill = "Grade")
+```
+**Discussion:** The graph tells us that the neighborhoods historically graded C, (Declining), have the highest percent of bird observations. While graded A (Best) and D (Hazardous) neighborhoods both hold about 22% recorded bird observations. Our previous graphs of the average percent of income and the average percentile of low life expectancy suggested that the legacy of redlining is still effecting Los Angeles County. From those graphs, we would also expect to see similar result in our biodiversity data. Here, that would be shown as neighborhoods graded A (Best) and B (Still Desireable), having the highest percent of bird observations; which is similar to the findings from Ellis-Soto et al. 2023. This would indicate these neighborhoods have the better habitats/greenry for the birds. However, what we expected is not reflected within our data. This is likely due to the fact that the HOLC Redline data, specifically the HOLC grades were assigned to neighborhoods during the early twentieth century, while the Biodiversity data takes observations from 2021-2023. Therefore, the difference could be a result of historically HOLC graded C ("Declining") and D ("Hazardous") neighborhoods becoming more habitable for birds, through the addition of greenery and open space. This suggests that while the legacy of redlining may still have an effect on some socioeconomic issues in Los Angeles County, it's impact may not be as harsh on environmental concerns, specifically bird biodiversity. However, further research or an updated system to understand the quality of neighborhoods in relation to environmental and socioeconomic issues could be used to understand the true change/development of historically redlined neighborhoods.
+
+### References:
+
+Global Biodiversity Information Facility, 2021. GBIF. Retrieved: October 8, 2025 from (https://www.gbif.org/)
+
+Nelson, R. K., Winling, L, et al. (2023). Mapping Inequality: Redlining in New Deal America. Digital Scholarship Lab. Retrieved: October, 8, 2025 https://dsl.richmond.edu/panorama/redlining.
+
+U.S. Environmental Protection Agency (EPA), 2023. EJScreen Technical Documentation.
+
+United States Environmental Protection Agency. 2015. EJSCREEN. Retrieved: October, 8, 2025, https://19january2017snapshot.epa.gov/ejscreen/download-ejscreen-data_.html
