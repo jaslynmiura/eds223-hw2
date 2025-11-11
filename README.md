@@ -1,29 +1,24 @@
 # The Legacy of Redlining in Los Angeles County
 
-**Authors**: Jaslyn Miura
-
 This is a GitHub repository for Jaslyn Miura's analysis of the effects of redlining's legacy on modern day Los Angeles County and the bird biodiversity within the county, using EJScreen, HOLC Redlining, and Biodiversity observation data.
 
 To understand the redlining's effects on the present day Los Angeles County, a map was created to understand the distribution of redlining grades assigned to different neighborhoods in the county. Bar graphs were produced to then determine the relationship between several environmental justice issues and the proportion of neighborhood grades. A graph was created to understand the proportion of bird observations within each redlining grade.
 
 ## Directory
 
-EDS223-HW2
-│   README.md
-│   HW2.qmd
-│   eds223-hw2.Rproj files    
-│
-└───.gitignore
-     └───data
-         └───ejscreen
-         └───gbif-birds-LA
-         └───mapping-inequality
+```         
+redlining-legacy-los-angeles
+├── data
+│   ├── ejscreen
+│   ├── gbif-birds-LA
+│   └── mapping-inequality
+├── eds223-hw2.Rproj
+├── HW2.pdf
+├── redlining_LA.qmd
+└── README.md
+```
 
 The eds-hw2 directory contains:
-
-**HW2.qmd:** Quarto document that creates a map of LA County and bar graphs for analysis.
-
-**HW2.pdf:** Rendered quarto document with complete code, maps, and analysis.
 
 **data**:
 
@@ -32,6 +27,10 @@ The eds-hw2 directory contains:
 -   gbif-birds-LA: raw Biodiversity observations data
 
 -   mapping-inequality: raw HOLC Redlining data
+
+**HW2.qmd:** Quarto document that creates a map of LA County and bar graphs for analysis.
+
+**HW2.pdf:** Rendered quarto document with complete code, maps, and analysis.
 
 **Data Access:**
 
@@ -58,3 +57,5 @@ Nelson, R. K., Winling, L, et al. (2023). Mapping Inequality: Redlining in New D
 U.S. Environmental Protection Agency (EPA), 2023. EJScreen Technical Documentation.
 
 United States Environmental Protection Agency. 2015. EJSCREEN. Retrieved: October, 8, 2025, <https://19january2017snapshot.epa.gov/ejscreen/download-ejscreen-data_.html>
+
+**Author:** Jaslyn Miura
