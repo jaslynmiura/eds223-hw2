@@ -14,3 +14,9 @@ HW2.html
 
 # ignoring the HW2_files
 HW2_files/
+
+# ignoring the redlining_LA cache files
+redlining_LA_cache/
+
+# ignoring the redlining_LA_files
+redlining_LA_files/
